@@ -33,6 +33,7 @@ export default class Truncate extends Component {
         this.measureWidth = this.measureWidth.bind(this);
         this.getLines = this.getLines.bind(this);
         this.renderLine = this.renderLine.bind(this);
+        this.didTruncate = false;
     }
 
     componentDidMount() {
@@ -93,7 +94,7 @@ export default class Truncate extends Component {
         test.innerHTML = 'foo<br/>bar';
 
         if (test[contentKey].replace(/\r\n|\r/g, '\n') !== 'foo\nbar') {
-            div.innerHTML = div.innerHTML.replace(/<br.*?[\/]?>/gi, '\n');
+            div.innerHTML = div.innerHTML.replace(/<br.*?[/]?>/gi, '\n');
             text = div[contentKey];
         }
 
@@ -108,6 +109,7 @@ export default class Truncate extends Component {
         const {
             onTruncate
         } = this.props;
+        this.didTruncate = didTruncate;
 
         if (typeof onTruncate === 'function') {
             this.timeout = window.requestAnimationFrame(() => {
@@ -317,7 +319,9 @@ export default class Truncate extends Component {
             },
             getLines,
             renderLine,
-            onTruncate
+            onTruncate,
+            innerText,
+            didTruncate
         } = this;
 
         let text;
@@ -338,7 +342,7 @@ export default class Truncate extends Component {
         delete spanProps.trimWhitespace;
 
         return (
-            <span {...spanProps} ref={(targetEl) => { this.elements.target = targetEl; }}>
+            <span {...spanProps} ref={(targetEl) => { this.elements.target = targetEl; }} title={ this.didTruncate ? children : ''}>
                 <span>{text}</span>
                 <span ref={(textEl) => { this.elements.text = textEl; }}>{children}</span>
                 <span ref={(ellipsisEl) => { this.elements.ellipsis = ellipsisEl; }} style={this.styles.ellipsis}>
@@ -356,4 +360,4 @@ export default class Truncate extends Component {
             left: 0
         }
     };
-};
+}
